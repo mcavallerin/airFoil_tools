@@ -10,8 +10,9 @@ class airFoilShaper():
 	"""My new command"""
 
 	def GetResources(self):
-		return {'Pixmap'  : str(os.getcwd() + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
-			'Accel' : "Shift+S", # a default shortcut (optional)
+		os.environ["USER"]
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
+			'Accel' : "Shift+S",
 			'MenuText': "My New Command",
 			'ToolTip' : "Create new sections for wing"}
 
@@ -25,7 +26,6 @@ class airFoilShaper():
 	def IsActive(self):
 			"""Here you can define if the command must be active or not (greyed) if certain conditions
 			are met or not. This function is optional."""
-			#FreeCAD.Console.PrintMessage("Premuto2")
 			return True
 
 Gui.addCommand('airFoil_Shaper', airFoilShaper())
