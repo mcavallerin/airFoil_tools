@@ -9,7 +9,8 @@ class airFoil_toolsWorkbench ( Workbench ):
 	"Part workbench object"
 	def __init__(self):
 		import os
-		self.__class__.Icon = os.getcwd() + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/WorkBench.png"    
+		os.environ["USER"]
+		self.__class__.Icon = os.path.expandvars("/home/$USER") + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/WorkBench.png"    
 		self.__class__.MenuText = "airFoil_tools"
 		self.__class__.ToolTip = "workbench per generare profili NACA"
 
