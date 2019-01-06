@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 
 
 class airFoilShaper():
-	"""My new command"""
-
+	""" """
 	def GetResources(self):
-		return {'Pixmap'  : str(os.getcwd() + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
+		os.environ["USER"]
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S", # a default shortcut (optional)
 			'MenuText': "My New Command",
 			'ToolTip' : "Create new sections for wing"}
