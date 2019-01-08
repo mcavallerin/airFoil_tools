@@ -8,7 +8,9 @@
 class airFoil_toolsWorkbench ( Workbench ):
 	"Part workbench object"
 	def __init__(self):
-		import os		
+
+		import os
+
 		os.environ["USER"]
 		self.__class__.Icon = os.path.expandvars("/home/$USER") + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/WorkBench.png"    
 		self.__class__.MenuText = "airFoil_tools"
