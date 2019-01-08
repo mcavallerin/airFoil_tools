@@ -10,12 +10,11 @@ import Draft
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
+#se nel costruttore definisco le variabili base, i metodi seguenti non devono ricevere dei parametri perchè li ereditano dal costruttore iniziale
 class NACA4_Generator:
 	
 	def __init__(self):
-		self.listaProfili = []
-		self.contatore = 1
+		pass
 
 	def _Yt (self,maxThick,x): #maxSpessore
 		A =  0.2969*math.pow(x,0.5)
@@ -24,6 +23,7 @@ class NACA4_Generator:
 		D =  0.2843*math.pow(x,3)
 		E =  0.1036*math.pow(x,4)
 		return (maxThick/100.)*5*(A-B-C+D-E)
+
 	def _Yc (self,m,p,x): #linea mediana
 		m = m/100.
 		p = p/10.
