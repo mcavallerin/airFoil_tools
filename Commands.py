@@ -36,52 +36,49 @@ def airFoilBuilder():
 
 	form1 = PopUpMenu.PopUpNACA4()
 	form1.exec_()
-
-	m				=	int(form1.numericInput1.text())
-	p				= 	int(form1.numericInput2.text())
-	TH 				=	int(form1.numericInput3.text())
+	
+	m			=	int(form1.numericInput1.text())
+	p			= 	int(form1.numericInput2.text())
+	TH 			=	int(form1.numericInput3.text())
 	chord			=	float(form1.numericInput4.text())
 	resolution 		= 	int(form1.numericInput5.text())
+	if form1.interpolation == userLinear:
+		interpolation = 0
+        else:
+		interpolation = 1
+
+	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
+	
 	xOffSet			=	float(form1.numericInput6.text())
 	zOffSet			=	float(form1.numericInput7.text())
 
-	if form1.interpolation == userLinear:
-		interpolation = 0
-
-	if form1.interpolation == userCosine:
-		interpolation = 1
-
-	if form1.result==userCancelled:
-		pass # steps to handle user clicking Cancel
-
 	if form1.result == userPlot:
-		NACA4 = airF.builderNACA4(m, p, TH, chord, resolution,interpolation)
-		airF.airFoilPlot(NACA4)
+		NACA4_Generator.airFoilPlot(foil)
 		return airFoilBuilder()
 
+	if form1.result==userCancelled:
+		pass
+
 	if form1.result==userApplied:
-		NACA4 = airF.builderNACA4(m, p, TH, chord, resolution,interpolation)
-		airF.drawAirFoil(NACA4,xOffSet,zOffSet)
+		NACA4_Generator.drawAirFoil(foil,xOffSet,zOffSet)
 		airFoilBuilder()
 
 	if form1.result==userOK:
-		NACA4 = airF.builderNACA4(m, p, TH, chord, resolution,interpolation)
-		airF.drawAirFoil(NACA4,xOffSet,zOffSet)
+		NACA4_Generator.drawAirFoil(foil,xOffSet,zOffSet)
 
-userLinear				= 0
-userCosine				= 1
-userPlot				= "Plotted"
-userCancelled			= "Cancelled"
-userApplied				= "Applied"
-userOK					= "OK"
+
+userLinear	= 0
+userCosine	= 1
+userPlot        = "Plotted"
+userCancelled	= "Cancelled"
+userApplied     = "Applied"
+userOK		= "OK"
 
 # code ***********************************************************************************
 
 
 docu = FreeCAD.newDocument("New_Airfoil")
 
-
-airF = NACA4_Generator.NACA4_Generator()
 
 
 
