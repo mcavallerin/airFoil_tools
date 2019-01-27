@@ -17,8 +17,8 @@ class airFoilShaper():
 			'MenuText': "My New Command",
 			'ToolTip' : "Create new sections for wing"}
 
-	def Activated(self, airList =[], name=""):
-				self.airList = airList
+	def Activated(self):
+
 				"Do something here"
 				staticmethod(airFoilBuilder())
 				FreeCAD.Console.PrintMessage("new section for wing" + "\n")

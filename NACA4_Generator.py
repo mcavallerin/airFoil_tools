@@ -10,16 +10,17 @@ import Draft
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-#se nel costruttore definisco le variabili base, i metodi seguenti non devono ricevere dei parametri perchè li ereditano dal costruttore iniziale
+
 class NACA4_Generator:
 	
-	def __init__(self, m, p, TH, chord, resolution, interpolation):
-		self.m 		        = m
-		self.p 		        = p
-		self.TH 	        = TH
-		self.chord	        = chord
-		self.resolution         = resolution
-		self.interpolation      = interpolation
+	def __init__(self, m=4, p=4, TH=12, chord=100, resolution=100, interpolation=1):
+				self.m 				= m
+				self.p 				= p
+				self.TH 			= TH
+				self.chord			= chord
+				self.resolution		 = resolution
+				self.interpolation	  = interpolation
+				print (math.pow((1 - self.p),2))
 
 	def _Yt (self,_TH,x):
 		'''max thickness'''
@@ -32,12 +33,12 @@ class NACA4_Generator:
 
 	def _Yc (self,x):
 		'''chamber line'''
-		self.m = self.m/100.
-		self.p = self.p/10.
+		m = self.m/100.
+		p = self.p/10.
 		if (x<=self.p):
-			return self.m/math.pow(self.p,2)*(2*self.p*x-math.pow(x,2))
+			return m/math.pow(p,2)*(2*p*x-math.pow(x,2))
 		else:
-			return self.m/math.pow(1-self.p,2)*(1-2*self.p+2*self.p*x-math.pow(x,2))
+			return m/math.pow((1-p),2)*(1-2*p+2*p*x-math.pow(x,2))
 
 	def _dYc (self,x):
 		'''gradient of chamber line'''
@@ -61,13 +62,13 @@ class NACA4_Generator:
 			for i in range(self.resolution):
 				Xp[i] = 0.5*(1-math.cos(beta[i]))
 
-		Yt      = np.linspace(0,1,self.resolution)					#list of point for thickness
-		teta    = np.linspace(0,1,self.resolution)					#list of point for gradient
-		Xu      = np.linspace(0,1,self.resolution)					#list of point on Xupper Axis				
-		Xl      = np.linspace(0,1,self.resolution)					#list of point on Xlower Axis
-		Yu      = np.linspace(0,1,self.resolution)					#list of point on Yupper Axis
-		Yl      = np.linspace(0,1,self.resolution)					#list of point on YLower Axis
-		if self.m==0 and self.p ==0:
+		Yt	  = np.linspace(0,1,self.resolution)					#list of point for thickness
+		teta	= np.linspace(0,1,self.resolution)					#list of point for gradient
+		Xu	  = np.linspace(0,1,self.resolution)					#list of point on Xupper Axis				
+		Xl	  = np.linspace(0,1,self.resolution)					#list of point on Xlower Axis
+		Yu	  = np.linspace(0,1,self.resolution)					#list of point on Yupper Axis
+		Yl	  = np.linspace(0,1,self.resolution)					#list of point on YLower Axis
+		if (self.m==0 and self.p ==0):
 			for i in range(self.resolution):
 				Yt[i]   = self._Yt(self.TH,Xp[i])
 				Xu[i]   = Xp[i]*self.chord
@@ -97,37 +98,37 @@ class NACA4_Generator:
 #--------------------------
 
 def drawAirFoil(_foil,_xOffSet,_zOffSet):
-        '''generate splines'''
-        _NACA4 = NACA4_Generator.builderNACA4(_foil)
-        upperList=[]
-        lowerList=[]
-        for i in range (_NACA4[4]):
-                point = FreeCAD.Vector(_NACA4[0][i]+_xOffSet, _NACA4[1][i], _zOffSet)
-                upperList.append(point)
-                point = FreeCAD.Vector(_NACA4[2][i]+_xOffSet, _NACA4[3][i], _zOffSet)
-                lowerList.append(point)
+		'''generate splines'''
+		_NACA4 = NACA4_Generator.builderNACA4(_foil)
+		upperList=[]
+		lowerList=[]
+		for i in range (_NACA4[4]):
+				point = FreeCAD.Vector(_NACA4[0][i]+_xOffSet, _NACA4[1][i], _zOffSet)
+				upperList.append(point)
+				point = FreeCAD.Vector(_NACA4[2][i]+_xOffSet, _NACA4[3][i], _zOffSet)
+				lowerList.append(point)
 
-        Draft.makeBSpline(upperList, closed=False)
-        Draft.makeBSpline(lowerList, closed=False)
-        FreeCADGui.activeDocument().activeView().viewAxonometric()
-        FreeCADGui.SendMsgToActiveView("ViewFit")
+		Draft.makeBSpline(upperList, closed=False)
+		Draft.makeBSpline(lowerList, closed=False)
+		FreeCADGui.activeDocument().activeView().viewAxonometric()
+		FreeCADGui.SendMsgToActiveView("ViewFit")
 
 def airFoilPlot(_foil):
-        '''use matplotlib to plot NACA4 air foil'''	
-        _NACA4 = NACA4_Generator.builderNACA4(_foil)
-        lista = [[],[],[],[]]
-        
-        for j in range (4):
-                for i in range (_NACA4[4]):
-                        if j%2==0:
-                                lista[j].append(_NACA4[j][i])
-                        else:
-                                lista[j].append(_NACA4[j][i])
-                
-        plt.figure(figsize=(10,2))
-        plt.plot(lista[0],lista[1],lista[0],lista[3])
-        plt.show()
+		'''use matplotlib to plot NACA4 air foil'''	
+		_NACA4 = NACA4_Generator.builderNACA4(_foil)
+		lista = [[],[],[],[]]
+		
+		for j in range (4):
+				for i in range (_NACA4[4]):
+						if j%2==0:
+								lista[j].append(_NACA4[j][i])
+						else:
+								lista[j].append(_NACA4[j][i])
 
+		plt.figure(figsize=(10,2))
+		plt.plot(lista[0],lista[1])
+		plt.plot(lista[2],lista[3])
+		plt.show()
 
 #-----------------------------------------------------------------------------------------
 
