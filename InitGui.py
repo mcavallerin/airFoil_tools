@@ -19,10 +19,8 @@ class airFoil_toolsWorkbench ( Workbench ):
 	def Initialize(self):
 		"This function is executed when FreeCAD starts"
 		import Commands # import here all the needed files that create your FreeCAD commands
-		self.list = ["airFoil_Shaper"] # A list of command names created in the line above
+		self.list = ["airFoil_2D","airFoil2D_PD"] # A list of command names created in the line above
 		self.appendToolbar("My Commands", self.list) # creates a new toolbar with your commands
-		#self.appendMenu("Il menu dei nastri", self.list) # creates a new menu
-		#self.appendMenu(["An existing Menu","My submenu"],self.list) # appends a submenu to an existing menu 
 
 
 	def Activated(self):

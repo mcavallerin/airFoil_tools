@@ -20,7 +20,7 @@ class NACA4_Generator:
 				self.chord			= chord
 				self.resolution		 = resolution
 				self.interpolation	  = interpolation
-				print (math.pow((1 - self.p),2))
+				
 
 	def _Yt (self,_TH,x):
 		'''max thickness'''
@@ -83,7 +83,12 @@ class NACA4_Generator:
 				Xl[i]   = (Xp[i]+Yt[i]*math.sin(teta[i]))*self.chord
 				Yu[i]   = (self._Yc(Xp[i])+Yt[i]*math.cos(teta[i]))*self.chord
 				Yl[i]   = (self._Yc(Xp[i])-Yt[i]*math.cos(teta[i]))*self.chord
-			
+		
+		Xl[0] = Xu[0]
+		Yl[0] = Yl[0]
+		Xl[-1] = Xu[-1]
+		Yl[-1] = Yl[-1]
+
 		NACA4=[]
 		NACA4.append(Xu)
 		NACA4.append(Yu)
@@ -97,21 +102,46 @@ class NACA4_Generator:
 #plotting/drawing functions
 #--------------------------
 
-def drawAirFoil(_foil,_xOffSet,_zOffSet):
-		'''generate splines'''
-		_NACA4 = NACA4_Generator.builderNACA4(_foil)
-		upperList=[]
-		lowerList=[]
-		for i in range (_NACA4[4]):
-				point = FreeCAD.Vector(_NACA4[0][i]+_xOffSet, _NACA4[1][i], _zOffSet)
-				upperList.append(point)
-				point = FreeCAD.Vector(_NACA4[2][i]+_xOffSet, _NACA4[3][i], _zOffSet)
-				lowerList.append(point)
+def drawAirFoil(_foil):
+	'''generate splines'''
+	_NACA4 = NACA4_Generator.builderNACA4(_foil)
+	upperList=[]
+	lowerList=[]
+	for i in range (_NACA4[4]):
+			point = FreeCAD.Vector(_NACA4[0][i], _NACA4[1][i], 0)
+			upperList.append(point)
+			point = FreeCAD.Vector(_NACA4[2][i], _NACA4[3][i], 0)
+			lowerList.append(point)
 
-		Draft.makeBSpline(upperList, closed=False)
-		Draft.makeBSpline(lowerList, closed=False)
-		FreeCADGui.activeDocument().activeView().viewAxonometric()
-		FreeCADGui.SendMsgToActiveView("ViewFit")
+	Draft.makeBSpline(upperList, closed=False)
+	Draft.makeBSpline(lowerList, closed=False)
+	FreeCADGui.activeDocument().activeView().viewAxonometric()
+	FreeCADGui.SendMsgToActiveView("ViewFit")
+
+def sketchOnPlane(_foil,element, _zOffSet):
+
+	name = 'sketch' + str(element)
+	FreeCAD.activeDocument().addObject('Sketcher::SketchObject',name)
+	FreeCAD.activeDocument().getObject(name).Placement = FreeCAD.Placement(FreeCAD.Vector(0.000000,0.000000,_zOffSet),FreeCAD.Rotation(0.000000,0.000000,0.000000,1.000000))
+	FreeCAD.activeDocument().getObject(name).MapMode = "Deactivated"
+
+	_NACA4 = NACA4_Generator.builderNACA4(_foil)
+	upperList=[]
+	lowerList=[]
+	for i in range (_NACA4[4]):
+			point = FreeCAD.Vector(_NACA4[0][i], _NACA4[1][i], 0)
+			upperList.append(point)
+#			FreeCAD.activeDocument().getObject(name).addGeometry(Part.Point(point))
+			point = FreeCAD.Vector(_NACA4[2][i], _NACA4[3][i], 0)
+			lowerList.append(point)
+#			FreeCAD.activeDocument().getObject(name).addGeometry(Part.Point(point))
+	
+	FreeCAD.activeDocument().getObject(name).addGeometry(Part.BSplineCurve(upperList,None,None,False,3,None,False),False)
+	FreeCAD.activeDocument().getObject(name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
+
+	element = element + 1
+
+	return element
 
 def airFoilPlot(_foil):
 		'''use matplotlib to plot NACA4 air foil'''	
