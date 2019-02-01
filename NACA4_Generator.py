@@ -121,6 +121,17 @@ def drawAirFoil(_foil):
 def sketchOnPlane(_foil,element, _zOffSet):
 
 	name = 'sketch' + str(element)
+	obj = FreeCAD.ActiveDocument.Objects
+	size = len(obj)
+	for j in range(size):
+		for i in obj:
+			try:
+				if int(i.Name[6:]) == element:
+					element +=1
+					name = 'sketch' + str(element)
+			except:
+				continue
+
 	FreeCAD.activeDocument().addObject('Sketcher::SketchObject',name)
 	FreeCAD.activeDocument().getObject(name).Placement = FreeCAD.Placement(FreeCAD.Vector(0.000000,0.000000,_zOffSet),FreeCAD.Rotation(0.000000,0.000000,0.000000,1.000000))
 	FreeCAD.activeDocument().getObject(name).MapMode = "Deactivated"
@@ -131,15 +142,13 @@ def sketchOnPlane(_foil,element, _zOffSet):
 	for i in range (_NACA4[4]):
 			point = FreeCAD.Vector(_NACA4[0][i], _NACA4[1][i], 0)
 			upperList.append(point)
-#			FreeCAD.activeDocument().getObject(name).addGeometry(Part.Point(point))
 			point = FreeCAD.Vector(_NACA4[2][i], _NACA4[3][i], 0)
 			lowerList.append(point)
-#			FreeCAD.activeDocument().getObject(name).addGeometry(Part.Point(point))
 	
 	FreeCAD.activeDocument().getObject(name).addGeometry(Part.BSplineCurve(upperList,None,None,False,3,None,False),False)
 	FreeCAD.activeDocument().getObject(name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
 
-	element = element + 1
+	#element = element + 1
 
 	return element
 

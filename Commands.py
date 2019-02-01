@@ -13,7 +13,7 @@ class airFoil2D():
 		os.environ["USER"]
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
-			'MenuText': "My New Command",
+			'MenuText': "airFoil_2D", 
 			'ToolTip' : "Create new sections for wing"}
 
 	def Activated(self):
@@ -35,13 +35,13 @@ class airFoil2D():
 
 Gui.addCommand('airFoil_2D', airFoil2D())
 
-class airFoil2DPD():
+class airFoil2DPD():	#part Design method
 	""" """
 	def GetResources(self):
 		os.environ["USER"]
-		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
-			'MenuText': "My New Command",
+			'MenuText': "airFoil2DPD",
 			'ToolTip' : "Create new sections for wing"}
 
 	def Activated(self, element = 0):
@@ -132,12 +132,12 @@ def airFoilSketcher(element):
 		next = NACA4_Generator.sketchOnPlane(foil, element, zOffSet)
 		pass
 
-userLinear	= 0
-userCosine	= 1
+userLinear		= 0
+userCosine		= 1
 userPlot        = "Plotted"
 userCancelled	= "Cancelled"
 userApplied     = "Applied"
-userOK		= "OK"
+userOK			= "OK"
 
 
 
