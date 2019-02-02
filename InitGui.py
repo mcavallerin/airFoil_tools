@@ -14,23 +14,23 @@ class airFoil_toolsWorkbench ( Workbench ):
 		os.environ["USER"]
 		self.__class__.Icon = os.path.expandvars("/home/$USER") + "/.FreeCAD/Mod/airFoil_tools/Resources/icons/WorkBench.png"    
 		self.__class__.MenuText = "airFoil_tools"
-		self.__class__.ToolTip = "workbench per generare profili NACA"
+		self.__class__.ToolTip = "workbench for airFoils"
 
 	def Initialize(self):
 		"This function is executed when FreeCAD starts"
 		import Commands # import here all the needed files that create your FreeCAD commands
 
-		sketchCommands = [
+		foilDef_Gen = [
 			'airFoil_2D',
-			'airFoil2D_PD'
+			'wingModeller_3D'
 			]
 		self.appendToolbar(
-			'Sketch Commands',
-			sketchCommands
+			'Foil Generators',
+			foilDef_Gen
 			)
 	
 		commandslist = list()
-		commandslist.extend(sketchCommands)
+		commandslist.extend(foilDef_Gen)
 	
 		self.appendMenu(
 			'airFoilTools',
