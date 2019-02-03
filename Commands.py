@@ -12,8 +12,8 @@ class airFoil2D():	#part Design method
 		os.environ["USER"]
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
-			'MenuText': "airFoil2DPD",
-			'ToolTip' : "Create new sections for wing"}
+			'MenuText': "airFoil2D",
+			'ToolTip' : "Create new sections for airFoil on sketches; actually only NACA4 digit is supported"}
 
 	def Activated(self, element = 0, name ='foilSketch'):
 		self.element = element
@@ -48,19 +48,33 @@ class airFoil2D():	#part Design method
 			are met or not. This function is optional."""
 			return True
 
-Gui.addCommand('airFoil_2D', airFoil2D())
+Gui.addCommand('airFoil2D', airFoil2D())
 
-class wingModeller():	#part Design method
+class wingExtruderPipe():	#part Design method
 	
 	def GetResources(self):
 		os.environ["USER"]
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
-			'MenuText': "wingModeller",
-			'ToolTip' : "Ready to fly"}
+			'MenuText': "wingExtruderPipe",
+			'ToolTip' : "Generates solid feature and body using additive pipe PartDesign Feature"}
 
-	def Activated(self, sel = []):
+	def Activated(self, sel = [], element = 0, name ='foilWing'):
 		self.sel = FreeCADGui.Selection.getSelection()
+		self.name = name
+		self.element = element
+		
+		N = len(self.name)
+
+		obj = FreeCAD.ActiveDocument.Objects
+		size = len(obj)
+		for j in range(size):
+			for i in obj:
+				try:
+					if int(i.Name[N:]) == self.element:
+						self.element +=1
+				except:
+					continue
 
 		if FreeCAD.activeDocument() == None:
 			QtGui.QMessageBox.information(
@@ -78,7 +92,6 @@ class wingModeller():	#part Design method
 				)
 			return
 
-
 		points=[]
 		check = -999999.
 		for i in self.sel:
@@ -86,42 +99,89 @@ class wingModeller():	#part Design method
 				QtGui.QMessageBox.information(
 					QtGui.QApplication.activeWindow(),
 					"Section for foil error",
-					"Sections could have same Placement, please adjust before fly"
+					"Sections could have same Placement, please adjust before to fly"
 					)
 				return				
-			points.append(i.Placement.Base)
+#			points.append(i.Placement.Base) #polyline on all origins for airfoils
 			check = i.Placement.Base.z
-#		points.sort(key=FreeCAD.Vector.z)
-			
-		FreeCAD.ActiveDocument.addObject("PartDesign::Body", "ala")
-		for i in self.sel:
-			FreeCAD.ActiveDocument.getObject('ala').ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
-			#sistemare nome ala
+		points.append(self.sel[0].Placement.Base)
+		points.append(self.sel[-1].Placement.Base)
 
-		line = Draft.makeWire(points)
-		FreeCAD.ActiveDocument.getObject('ala').ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(line.Label),None,'',[])
 
-		FreeCAD.ActiveDocument.getObject('ala').newObject('PartDesign::AdditivePipe','AdditivePipe')
-		FreeCAD.ActiveDocument.getObject('AdditivePipe').Profile = FreeCAD.ActiveDocument.getObject(self.sel[0].Label)
-		FreeCAD.ActiveDocument.getObject('AdditivePipe').Spine = FreeCAD.ActiveDocument.getObject(line.Label)
-		FreeCAD.ActiveDocument.getObject('AdditivePipe').Transformation = u"Multisection"
-		FreeCAD.ActiveDocument.getObject('AdditivePipe').Mode = u"Fixed"
-		FreeCAD.ActiveDocument.getObject('AdditivePipe').Sections = self.sel[1:]
-		FreeCAD.ActiveDocument.recompute()
-		
-		for i in self.sel:
-			Gui.runCommand('Std_ToggleVisibility',0)
-				
-		FreeCAD.Console.PrintMessage("new wing, just ready to fly!" + "\n")
+		wing = self.name + str(self.element)
+		solid = "solid" + str(self.element)
+
+#		staticmethod(pipeWing(self.sel,points, wing, solid))
+		self.extrudeWing (self.sel,points, wing, solid)
+
+		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
 		return
+
+	def extrudeWing(self, selected, points, wing, solid):
+		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
+		for i in selected:
+			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
+		line = Draft.makeWire(points)
+		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(line.Label),None,'',[])
+		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
+
+		FreeCAD.ActiveDocument.getObject(solid).Profile 		= FreeCAD.ActiveDocument.getObject(selected[0].Label)
+		FreeCAD.ActiveDocument.getObject(solid).Spine			= FreeCAD.ActiveDocument.getObject(line.Label)
+		FreeCAD.ActiveDocument.getObject(solid).Transformation 	= u"Multisection"
+		FreeCAD.ActiveDocument.getObject(solid).Mode 			= u"Fixed"
+		FreeCAD.ActiveDocument.getObject(solid).Sections		= selected[1:]
+		FreeCAD.ActiveDocument.getObject(solid).Refine 			= True
+		FreeCAD.ActiveDocument.getObject(solid).Label2 			= "additivePipe"
+		FreeCAD.ActiveDocument.recompute()
+		return
+
 
 	def IsActive(self):
 			"""Here you can define if the command must be active or not (greyed) if certain conditions
 			are met or not. This function is optional."""
 			return True
 
-Gui.addCommand('wingModeller_3D', wingModeller())
+Gui.addCommand('wingExtruderPipe', wingExtruderPipe())
 
+class wingExtruderLoft(wingExtruderPipe):	#part Design method
+	
+	def GetResources(self):
+		os.environ["USER"]
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
+			'Accel' : "Shift+S",
+			'MenuText': "wingExtruderLoft",
+			'ToolTip' : "Generates solid feature and body using loft PartDesign Feature"}
+
+
+	def extrudeWing(self, selected, points, wing, solid):
+		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
+		for i in selected:
+			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
+		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditiveLoft',solid)
+		FreeCAD.ActiveDocument.getObject(solid).Profile 	= FreeCAD.ActiveDocument.getObject(selected[0].Label)
+		FreeCAD.ActiveDocument.getObject(solid).Sections	= selected[1:]
+		FreeCAD.ActiveDocument.getObject(solid).Ruled 		= True
+		FreeCAD.ActiveDocument.getObject(solid).Closed 		= True
+		FreeCAD.ActiveDocument.getObject(solid).Refine 		= True
+		FreeCAD.ActiveDocument.getObject(solid).Label2 		= "loft"
+		FreeCAD.ActiveDocument.recompute()
+		return
+
+
+
+Gui.addCommand('wingExtruderLoft', wingExtruderLoft())
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------
+#static methods
+#----------------------------------------------------------------------------------------------------------------------------------------
 
 def airFoilSketcher(element,name):
 
@@ -153,23 +213,24 @@ def airFoilSketcher(element,name):
 		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
 		wing = airFoil2D()
 		return wing.Activated(next)
+		
 
 	if form1.result==userOK:
 		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
 		pass
 
-def counter(nameSize,Number):
-
-	obj = FreeCAD.ActiveDocument.Objects
-	size = len(obj) #number of elements on tree of features
-	for j in range(size):
-		for i in obj:
-			try:
-				if int(i.Name[nameSize:]) == Number: #i.Name is a unique read-only property of FreeCAD, if number of element already given, number+1
-					Number +=1
-			except:
-				continue
-	return Number
+#def counter(nameSize,Number):
+#
+#	obj = FreeCAD.ActiveDocument.Objects
+#	size = len(obj) #number of elements on tree of features
+#	for j in range(size):
+#		for i in obj:
+#			try:
+#				if int(i.Name[nameSize:]) == Number: #i.Name is a unique read-only property of FreeCAD, if number of element already given, number+1
+#					Number +=1
+#			except:
+#				continue
+#	return Number
 
 #-----------------------------------------------------------------
 

@@ -89,12 +89,14 @@ class NACA4_Generator:
 		Xl[-1] = Xu[-1]
 		Yl[-1] = Yl[-1]
 
+
 		NACA4=[]
 		NACA4.append(Xu)
 		NACA4.append(Yu)
 		NACA4.append(Xl)
 		NACA4.append(Yl)
 		NACA4.append(self.resolution)
+		NACA4.append(str(self.m)+str(self.p)+str(self.TH))
 
 		return NACA4
 
@@ -123,6 +125,7 @@ def sketchOnPlane(_foil,element,name,_zOffSet):
 	
 	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(upperList,None,None,False,3,None,False),False)
 	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
+	FreeCAD.activeDocument().getObject(_name).Label2 = _NACA4[5]
 
 	element +=1
 

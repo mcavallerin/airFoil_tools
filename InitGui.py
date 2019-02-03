@@ -18,24 +18,36 @@ class airFoil_toolsWorkbench ( Workbench ):
 
 	def Initialize(self):
 		"This function is executed when FreeCAD starts"
-		import Commands # import here all the needed files that create your FreeCAD commands
+		import Commands, editCommands # import here all the needed files that create your FreeCAD commands
 
-		foilDef_Gen = [
-			'airFoil_2D',
-			'wingModeller_3D'
+		generationCommands = [
+			'airFoil2D',
+			'wingExtruderPipe',
+			'wingExtruderLoft'
 			]
+		editCommands = [
+			'insertFoil'
+			]
+
 		self.appendToolbar(
-			'Foil Generators',
-			foilDef_Gen
+			'foil Generators',
+			generationCommands,
+			)
+
+		self.appendToolbar(
+			'foil Editing',
+			editCommands,
 			)
 	
 		commandslist = list()
-		commandslist.extend(foilDef_Gen)
+		commandslist.extend(generationCommands)
+		commandslist.extend(editCommands)
 	
 		self.appendMenu(
-			'airFoilTools',
+			'airFoil_tools',
 			commandslist
 			)
+
 
 	def Activated(self):
 		"This function is executed when the workbench is activated"
