@@ -96,7 +96,7 @@ class NACA4_Generator:
 		NACA4.append(Xl)
 		NACA4.append(Yl)
 		NACA4.append(self.resolution)
-		NACA4.append(str(self.m)+str(self.p)+str(self.TH))
+		NACA4.append(str(self.m)+str(self.p)+str(self.TH)+"c"+str(self.chord)+"r"+str(self.resolution))
 
 		return NACA4
 
