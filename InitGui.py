@@ -26,7 +26,8 @@ class airFoil_toolsWorkbench ( Workbench ):
 			'wingExtruderLoft'
 			]
 		editCommands = [
-			'insertFoil'
+			'insertFoil',
+			'replaceFoil'
 			]
 
 		self.appendToolbar(

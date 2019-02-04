@@ -2,9 +2,8 @@ import FreeCAD, FreeCADGui
 from FreeCAD import Gui
 import Part, math, Draft, os
 from FreeCAD import Base
-import PopUpMenu, NACA4_Generator
 from PySide import QtGui, QtCore
-
+import auxFunctions, errorMessage
 
 class insertFoil():	
 	
@@ -20,7 +19,7 @@ class insertFoil():
 		List = sel[1:-1]
 		exList = sel[0].Sections
 		List.extend(exList)
-		staticmethod(bubbleSort(List))
+		auxFunctions.bubbleSort(List)
 		sel[0].Sections = List
 		try:
 			sel[-1].End=(sel[-2].Placement.Base.x,sel[-2].Placement.Base.y,sel[-2].Placement.Base.z)
@@ -45,25 +44,28 @@ class replaceFoil():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/_airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "insertFoil",
-			'ToolTip' : "Allows you to replace foil section on existing solid wing"}
+			'ToolTip' : "Allows you to replace foil section on existing solid wing by selecting external sketch \n1.Make a selection of two sketches: first is the new one, second is inside a 3d Feature\n2.Activate the command"}
 
 	def Activated(self):#, sel=[]):
+		sel = FreeCADGui.Selection.getSelection()
+		if len(sel)<3 or len(sel)>3:
+			QtGui.QMessageBox.information(
+				QtGui.QApplication.activeWindow(),
+				"Selection error",
+				"You have to select:\n1.Feature(wing)\n2.SketchToBeReplaced\n3.New Sketch"
+				)
+			return	
+		index = 1		
+		for i in sel[0].Sections:
+			if i==sel[1]:
+				index = sel[0].Sections.index(i)
+				print (index)
+				List = sel[0].Sections
+				List.pop(index)
+				List.insert(index,sel[2])
+				sel[0].Sections = List
 
-		selN = FreeCADGui.Selection.getObject().Name
-		selF = FreeCADGui.Selection.getObject().Label2
-		
-		element = selN[10:]
-		name	= selN[-1]
-		
-		m			= int(selF[0])
-		p			= int(selF[1])
-		TH			= int(selF[2:4])
-		chord 		= float(selF[5:10])
-		resolution 	= float(selF[11:])
-
-		
-
-		FreeCAD.Console.PrintMessage("Foil reaplced" + "\n")
+		FreeCAD.Console.PrintMessage("Foil replaced" + "\n")
 		return
 
 	def IsActive(self):
@@ -71,15 +73,7 @@ class replaceFoil():
 			are met or not. This function is optional."""
 			return True
 
-Gui.addCommand('insertFoil', insertFoil())
-
-def bubbleSort(alist):
-	for passnum in range(len(alist)-1,0,-1):
-		for i in range(passnum):
-			if alist[i].Placement.Base.z>alist[i+1].Placement.Base.z:
-				temp = alist[i]
-				alist[i] = alist[i+1]
-				alist[i+1] = temp
+Gui.addCommand('replaceFoil', replaceFoil())
 
 
 

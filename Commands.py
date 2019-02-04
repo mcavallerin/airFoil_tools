@@ -4,6 +4,7 @@ import Part, math, Draft, os
 from FreeCAD import Base
 import PopUpMenu, NACA4_Generator
 from PySide import QtGui, QtCore
+import auxFunctions, errorMessage
 
 
 class airFoil2D():	#part Design method
@@ -18,27 +19,13 @@ class airFoil2D():	#part Design method
 	def Activated(self, element = 0, name ='foilSketch'):
 		self.element = element
 		self.name = name
-
 		N = len(self.name)
 		if FreeCAD.activeDocument() == None:
-			QtGui.QMessageBox.information(
-				QtGui.QApplication.activeWindow(),
-				"No active Document error",
-				"First create a new a file!"
-				)
+			errorMessage.errors("noFileOpen")
 			return
 
 		obj = FreeCAD.ActiveDocument.Objects
-		size = len(obj)
-		for j in range(size):
-			for i in obj:
-				try:
-					if int(i.Name[N:]) == self.element:
-						self.element +=1
-				except:
-					continue
-#		staticmethod(counter(N, self.element))
-
+		self.element = auxFunctions.counter(N,self.element,obj) #renumbering function in order to have unique name for objects
 		staticmethod(airFoilSketcher(self.element, self.name))
 		FreeCAD.Console.PrintMessage("new section for wing" + "\n")
 		return
@@ -60,67 +47,41 @@ class wingExtruderPipe():	#part Design method
 			'ToolTip' : "Generates solid feature and body using additive pipe PartDesign Feature"}
 
 	def Activated(self, sel = [], element = 0, name ='foilWing'):
+
 		self.sel = FreeCADGui.Selection.getSelection()
 		self.name = name
 		self.element = element
 		
-		N = len(self.name)
-
-		obj = FreeCAD.ActiveDocument.Objects
-		size = len(obj)
-		for j in range(size):
-			for i in obj:
-				try:
-					if int(i.Name[N:]) == self.element:
-						self.element +=1
-				except:
-					continue
-
 		if FreeCAD.activeDocument() == None:
-			QtGui.QMessageBox.information(
-				QtGui.QApplication.activeWindow(),
-				"No active Document error",
-				"First create a new a file!"
-				)
+			errorMessage.errors("noFileOpen")
 			return
-		
 		if len(self.sel) == 0 or len(self.sel) <2:
-			QtGui.QMessageBox.information(
-				QtGui.QApplication.activeWindow(),
-				"Inconsistent number of foil",
-				"At least two sketchs have to be selected"
-				)
+			errorMessage.errors("wrongSelection1")
 			return
 
+		N = len(self.name)
+		obj = FreeCAD.ActiveDocument.Objects
+		self.element = auxFunctions.counter(N,self.element,obj) #renumbering function in order to have unique name for objects
+		wing = self.name + str(self.element)
+		solid = "solid" + str(self.element)
+
+		self.extrudeWing (self.sel, wing, solid)
+		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
+		return
+
+	def extrudeWing(self, selected, wing, solid): #points
+		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
+		for i in selected:
+			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
+		#building the path
 		points=[]
 		check = -999999.
 		for i in self.sel:
 			if i.Placement.Base.z == check or i.Placement.Base.z < check:
-				QtGui.QMessageBox.information(
-					QtGui.QApplication.activeWindow(),
-					"Section for foil error",
-					"Sections could have same Placement, please adjust before to fly"
-					)
+				errorMessage.errors("buildError1")
 				return				
-#			points.append(i.Placement.Base) #polyline on all origins for airfoils
+			points.append(i.Placement.Base) #polyline on all origins for airfoils
 			check = i.Placement.Base.z
-		points.append(self.sel[0].Placement.Base)
-		points.append(self.sel[-1].Placement.Base)
-
-
-		wing = self.name + str(self.element)
-		solid = "solid" + str(self.element)
-
-#		staticmethod(pipeWing(self.sel,points, wing, solid))
-		self.extrudeWing (self.sel,points, wing, solid)
-
-		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
-		return
-
-	def extrudeWing(self, selected, points, wing, solid):
-		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
-		for i in selected:
-			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
 		line = Draft.makeWire(points)
 		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(line.Label),None,'',[])
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
@@ -153,7 +114,7 @@ class wingExtruderLoft(wingExtruderPipe):	#part Design method
 			'ToolTip' : "Generates solid feature and body using loft PartDesign Feature"}
 
 
-	def extrudeWing(self, selected, points, wing, solid):
+	def extrudeWing(self, selected, wing, solid):
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
 			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
@@ -171,7 +132,7 @@ class wingExtruderLoft(wingExtruderPipe):	#part Design method
 
 Gui.addCommand('wingExtruderLoft', wingExtruderLoft())
 
-----------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------
 #static methods
 #----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -211,17 +172,6 @@ def airFoilSketcher(element,name):
 		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
 		pass
 
-#def counter(nameSize,Number):
-#
-#	obj = FreeCAD.ActiveDocument.Objects
-#	size = len(obj) #number of elements on tree of features
-#	for j in range(size):
-#		for i in obj:
-#			try:
-#				if int(i.Name[nameSize:]) == Number: #i.Name is a unique read-only property of FreeCAD, if number of element already given, number+1
-#					Number +=1
-#			except:
-#				continue
 #	return Number
 
 #-----------------------------------------------------------------

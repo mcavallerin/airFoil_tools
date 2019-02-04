@@ -127,7 +127,6 @@ class PopUpNACA4(QtGui.QDialog):
 	def onApply(self):
 		self.result			= "Applied"
 		self.close()
-		#Commands.airFoilBuilder() eliminato per cercare di ottenere la creazione fin da subito al click di apply
 	def onOk(self):
 		self.result			= "OK"
 		self.close()
@@ -135,5 +134,10 @@ class PopUpNACA4(QtGui.QDialog):
 		self.result			= "Plotted"
 		self.close()
 
+class PopUpNACA4_edit(PopUpNACA4):
 
+	def onApply(self):
+		self.result			= "OK"
+		self.close()
+	
 
