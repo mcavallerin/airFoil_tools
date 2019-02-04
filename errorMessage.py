@@ -20,5 +20,5 @@ def errors(a):
 		QtGui.QMessageBox.information(
 			QtGui.QApplication.activeWindow(),
 			"Build Error",
-			"Sections could have same placement or try to select in increasing z value order"
+			"Sections could have same placement"
 			)

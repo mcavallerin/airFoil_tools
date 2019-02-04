@@ -51,7 +51,7 @@ class wingExtruderPipe():	#part Design method
 		self.sel = FreeCADGui.Selection.getSelection()
 		self.name = name
 		self.element = element
-		
+
 		if FreeCAD.activeDocument() == None:
 			errorMessage.errors("noFileOpen")
 			return
@@ -65,23 +65,22 @@ class wingExtruderPipe():	#part Design method
 		wing = self.name + str(self.element)
 		solid = "solid" + str(self.element)
 
+
+		if self.checkPositioning()!=True:
+			return
 		self.extrudeWing (self.sel, wing, solid)
 		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
 		return
 
 	def extrudeWing(self, selected, wing, solid): #points
+		points=[]
+		for i in self.sel:
+			points.append(i.Placement.Base) #polyline on all origins for airfoils
+
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
 			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
 		#building the path
-		points=[]
-		check = -999999.
-		for i in self.sel:
-			if i.Placement.Base.z == check or i.Placement.Base.z < check:
-				errorMessage.errors("buildError1")
-				return				
-			points.append(i.Placement.Base) #polyline on all origins for airfoils
-			check = i.Placement.Base.z
 		line = Draft.makeWire(points)
 		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(line.Label),None,'',[])
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
@@ -96,6 +95,15 @@ class wingExtruderPipe():	#part Design method
 		FreeCAD.ActiveDocument.recompute()
 		return
 
+	def checkPositioning(self):
+		auxFunctions.bubbleSort(self.sel)
+		check = self.sel[0].Placement.Base.z
+		for i in self.sel[1:]:
+			if i.Placement.Base.z == check:
+				errorMessage.errors("buildError1")
+				return False
+			check = i.Placement.Base.z		
+		return True		
 
 	def IsActive(self):
 			"""Here you can define if the command must be active or not (greyed) if certain conditions
