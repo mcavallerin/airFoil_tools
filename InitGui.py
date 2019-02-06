@@ -27,7 +27,8 @@ class airFoil_toolsWorkbench ( Workbench ):
 			]
 		editCommands = [
 			'insertFoil',
-			'replaceFoil'
+			'replaceFoil',
+			'replaceProfile'
 			]
 
 		self.appendToolbar(

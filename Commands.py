@@ -72,21 +72,28 @@ class wingExtruderPipe():	#part Design method
 		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
 		return
 
-	def extrudeWing(self, selected, wing, solid): #points
+	def pathForPipe(self, List):
 		points=[]
-		for i in self.sel:
+		for i in List:
 			points.append(i.Placement.Base) #polyline on all origins for airfoils
-
+		wire = Draft.makeWire(points)
+		return wire
+	
+	def extrudeWing(self, selected, wing, solid):
+#		points=[]
+#		for i in self.sel:
+#			points.append(i.Placement.Base) #polyline on all origins for airfoils
+#		line = Draft.makeWire(points)
+		wire = self.pathForPipe(self.sel)
+		
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
 			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
-		#building the path
-		line = Draft.makeWire(points)
-		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(line.Label),None,'',[])
-		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
+		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(wire.Label),None,'',[])
 
+		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
 		FreeCAD.ActiveDocument.getObject(solid).Profile 		= FreeCAD.ActiveDocument.getObject(selected[0].Label)
-		FreeCAD.ActiveDocument.getObject(solid).Spine			= FreeCAD.ActiveDocument.getObject(line.Label)
+		FreeCAD.ActiveDocument.getObject(solid).Spine			= FreeCAD.ActiveDocument.getObject(wire.Label)
 		FreeCAD.ActiveDocument.getObject(solid).Transformation 	= u"Multisection"
 		FreeCAD.ActiveDocument.getObject(solid).Mode 			= u"Fixed"
 		FreeCAD.ActiveDocument.getObject(solid).Sections		= selected[1:]
@@ -149,19 +156,19 @@ def airFoilSketcher(element,name):
 	form1 = PopUpMenu.PopUpNACA4()
 	form1.exec_()
 	
-	m			=	int(form1.numericInput1.text())
-	p			= 	int(form1.numericInput2.text())
-	TH 			=	int(form1.numericInput3.text())
+	m				=	int(form1.numericInput1.text())
+	p				= 	int(form1.numericInput2.text())
+	TH 				=	int(form1.numericInput3.text())
 	chord			=	float(form1.numericInput4.text())
 	resolution 		= 	int(form1.numericInput5.text())
+	zOffSet			=	float(form1.numericInput7.text())
+
 	if form1.interpolation == userLinear:
 		interpolation = 0
 	else:
 		interpolation = 1
-
-	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
 	
-	zOffSet			=	float(form1.numericInput7.text())
+	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
 
 	if form1.result == userPlot:
 		NACA4_Generator.airFoilPlot(foil)
@@ -174,13 +181,10 @@ def airFoilSketcher(element,name):
 		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
 		wing = airFoil2D()
 		return wing.Activated(next)
-		
 
 	if form1.result==userOK:
 		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
 		pass
-
-#	return Number
 
 #-----------------------------------------------------------------
 
