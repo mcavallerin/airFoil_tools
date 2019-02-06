@@ -33,19 +33,20 @@ class PopUpNACA4(QtGui.QDialog):
 		self.label4.move(20, 170)
 		self.label5 = QtGui.QLabel('resolution [pts]', self)
 		self.label5.move(20, 210)
-		self.label6 = QtGui.QLabel("leading edge starting point [mm] ", self)
-		self.label6.move(20, 250)
+#		self.label6 = QtGui.QLabel("leading edge starting point [mm] ", self)
+#		self.label6.move(20, 250)
 		self.label7 = QtGui.QLabel('profile plane offset [mm] ', self)
 		self.label7.move(20, 290)
 
 		# radio buttons
 		self.radioButton1 = QtGui.QRadioButton("linear spacing",self)
 		self.radioButton1.clicked.connect(self.onRadioButton1)
-		self.radioButton1.toggle()
+#		self.radioButton1.toggle()
 		self.radioButton1.move(370,70)
 		#
 		self.radioButton2 = QtGui.QRadioButton("cosine spacing",self)
 		self.radioButton2.clicked.connect(self.onRadioButton2)
+		self.radioButton2.toggle()
 		self.radioButton2.move(370,120)
 
 		# numeric input field
@@ -79,15 +80,15 @@ class PopUpNACA4(QtGui.QDialog):
 		self.numericInput5.setFixedWidth(100)
 		self.numericInput5.move(210, 210)
 
-		self.numericInput6 = QtGui.QLineEdit(self)
-		self.numericInput6.setInputMask("#xxxxxxxxx")
-		self.numericInput6.setText("0")
-		self.numericInput6.setFixedWidth(100)
-		self.numericInput6.move(210, 250)
+#		self.numericInput6 = QtGui.QLineEdit(self)
+#		self.numericInput6.setInputMask("#xxxxxxxxx")
+#		self.numericInput6.setText("0")
+#		self.numericInput6.setFixedWidth(100)
+#		self.numericInput6.move(210, 250)
 
 		self.numericInput7 = QtGui.QLineEdit(self)
 		self.numericInput7.setInputMask("#xxxxxxxxx")
-		self.numericInput7.setText("100")
+		self.numericInput7.setText("0")
 		self.numericInput7.setFixedWidth(100)
 		self.numericInput7.move(210, 290)
 
@@ -126,7 +127,6 @@ class PopUpNACA4(QtGui.QDialog):
 	def onApply(self):
 		self.result			= "Applied"
 		self.close()
-		#Commands.airFoilBuilder() eliminato per cercare di ottenere la creazione fin da subito al click di apply
 	def onOk(self):
 		self.result			= "OK"
 		self.close()
@@ -134,5 +134,10 @@ class PopUpNACA4(QtGui.QDialog):
 		self.result			= "Plotted"
 		self.close()
 
+class PopUpNACA4_edit(PopUpNACA4):
 
+	def onApply(self):
+		self.result			= "OK"
+		self.close()
+	
 
