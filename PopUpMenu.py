@@ -16,7 +16,7 @@ class PopUpNACA4(QtGui.QDialog):
 	def initUI(self):
 		self.result = "Cancelled"
 		self.interpolation = 0
-		self.trailEdge = True
+
 		# create our window
 		# define window		xLoc,yLoc,xDim,yDim
 		self.setGeometry(	250, 250, 600, 410)
@@ -49,16 +49,6 @@ class PopUpNACA4(QtGui.QDialog):
 		self.radioButton2.clicked.connect(self.onRadioButton2)
 		self.radioButton2.toggle()
 		self.radioButton2.move(370,120)
-
-		self.radioButton3 = QtGui.QRadioButton("Open TE",self)
-		self.radioButton3.clicked.connect(self.onRadioButton3)
-#		self.radioButton3.toggle()
-		self.radioButton3.move(370,170)
-		#
-		self.radioButton4 = QtGui.QRadioButton("Close TE",self)
-		self.radioButton4.clicked.connect(self.onRadioButton4)
-		self.radioButton4.toggle()
-		self.radioButton4.move(370,220)
 
 		# numeric input field
 		self.numericInput1 = QtGui.QLineEdit(self)
@@ -130,12 +120,6 @@ class PopUpNACA4(QtGui.QDialog):
 		pass
 	def onRadioButton2(self):
 		self.interpolation = 1
-		pass
-	def onRadioButton3(self):
-		self.trailEdge = True
-		pass
-	def onRadioButton4(self):
-		self.trailEdge = False
 		pass
 
 	def onCancel(self):
