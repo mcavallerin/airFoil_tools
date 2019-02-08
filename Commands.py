@@ -37,7 +37,7 @@ class airFoil2D():	#part Design method
 
 Gui.addCommand('airFoil2D', airFoil2D())
 
-class wingExtruderPipe():	#part Design method
+class wingExtruderPipe():	
 	
 	def GetResources(self):
 		os.environ["USER"]
@@ -80,10 +80,6 @@ class wingExtruderPipe():	#part Design method
 		return wire
 	
 	def extrudeWing(self, selected, wing, solid):
-#		points=[]
-#		for i in self.sel:
-#			points.append(i.Placement.Base) #polyline on all origins for airfoils
-#		line = Draft.makeWire(points)
 		wire = self.pathForPipe(self.sel)
 		
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
@@ -119,7 +115,7 @@ class wingExtruderPipe():	#part Design method
 
 Gui.addCommand('wingExtruderPipe', wingExtruderPipe())
 
-class wingExtruderLoft(wingExtruderPipe):	#part Design method
+class wingExtruderLoft(wingExtruderPipe):	
 	
 	def GetResources(self):
 		os.environ["USER"]
@@ -167,6 +163,7 @@ def airFoilSketcher(element,name):
 		interpolation = 0
 	else:
 		interpolation = 1
+
 	
 	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
 

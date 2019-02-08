@@ -20,15 +20,16 @@ class NACA4_Generator:
 				self.chord			= chord
 				self.resolution		 = resolution
 				self.interpolation	  = interpolation
-				
+			
 
 	def _Yt (self,_TH,x):
 		'''max thickness'''
 		A =  0.2969*math.pow(x,0.5)
 		B =  0.1260*math.pow(x,1)
 		C =  0.3516*math.pow(x,2)
-		D =  0.2843*math.pow(x,3)
+		D =  0.2843*math.pow(x,3)		
 		E =  0.1036*math.pow(x,4)
+
 		return (_TH/100.)*5*(A-B-C+D-E)
 
 	def _Yc (self,x):
@@ -62,7 +63,7 @@ class NACA4_Generator:
 			for i in range(self.resolution):
 				Xp[i] = 0.5*(1-math.cos(beta[i]))
 
-		Yt	  = np.linspace(0,1,self.resolution)					#list of point for thickness
+		Yt	  = np.linspace(0,1,self.resolution)				#list of point for thickness
 		teta	= np.linspace(0,1,self.resolution)					#list of point for gradient
 		Xu	  = np.linspace(0,1,self.resolution)					#list of point on Xupper Axis				
 		Xl	  = np.linspace(0,1,self.resolution)					#list of point on Xlower Axis
@@ -84,10 +85,12 @@ class NACA4_Generator:
 				Yu[i]   = (self._Yc(Xp[i])+Yt[i]*math.cos(teta[i]))*self.chord
 				Yl[i]   = (self._Yc(Xp[i])-Yt[i]*math.cos(teta[i]))*self.chord
 		
+		#coincident constrain for points on CAD
 		Xl[0] = Xu[0]
 		Yl[0] = Yl[0]
 		Xl[-1] = Xu[-1]
 		Yl[-1] = Yl[-1]
+		
 
 
 		NACA4=[]
@@ -100,23 +103,24 @@ class NACA4_Generator:
 
 		return NACA4
 
+		def alignOXY (self):
+			pass
+
 #--------------------------
 #drawing functions
 #--------------------------
 
 def sketchOnPlane(_foil,element,name,_zOffSet):
 
-	#name = 'foilSketch' + str(element)
 	_name = name + str(element)
-
+	_NACA4 = NACA4_Generator.builderNACA4(_foil)
+	upperList=[]
+	lowerList=[]
 
 	FreeCAD.activeDocument().addObject('Sketcher::SketchObject',_name)
 	FreeCAD.activeDocument().getObject(_name).Placement = FreeCAD.Placement(FreeCAD.Vector(0.000000,0.000000,_zOffSet),FreeCAD.Rotation(0.000000,0.000000,0.000000,1.000000))
 	FreeCAD.activeDocument().getObject(_name).MapMode = "Deactivated"
 
-	_NACA4 = NACA4_Generator.builderNACA4(_foil)
-	upperList=[]
-	lowerList=[]
 	for i in range (_NACA4[4]):
 			point = FreeCAD.Vector(_NACA4[0][i], _NACA4[1][i], 0)
 			upperList.append(point)
