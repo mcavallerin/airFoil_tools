@@ -1,3 +1,5 @@
+# author m.cavallerin 2019
+
 import FreeCAD, FreeCADGui
 from FreeCAD import Gui
 import Part, math, Draft, os

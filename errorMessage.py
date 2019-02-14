@@ -1,3 +1,5 @@
+# author m.cavallerin 2019
+
 from PySide import QtGui, QtCore
 
 def errors(a):
