@@ -4,7 +4,7 @@
 # import statements
 
 from PySide import QtGui, QtCore
-import Commands
+
 
 # UI Class definitions
 
@@ -13,16 +13,17 @@ class PopUpNACA4(QtGui.QDialog):
 	def __init__(self):
 		super(PopUpNACA4, self).__init__()
 		self.initUI()
-	def initUI(self):
+
+	def initUI(self, menu =""):
 		self.result = "Cancelled"
 		self.interpolation = 0
-
+		self.menu = menu
 		# create our window
 		# define window		xLoc,yLoc,xDim,yDim
 		self.setGeometry(	250, 250, 600, 410)
 		self.setWindowTitle("Define NACA4 data (XXXX): ")
 		self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-
+	
 		# create some Labels
 		self.label1 = QtGui.QLabel("Define maximum chamber [X...]", self)
 		self.label1.move(20, 20)
@@ -34,17 +35,16 @@ class PopUpNACA4(QtGui.QDialog):
 		self.label4.move(20, 170)
 		self.label5 = QtGui.QLabel('resolution [pts]', self)
 		self.label5.move(20, 210)
-#		self.label6 = QtGui.QLabel("leading edge starting point [mm] ", self)
-#		self.label6.move(20, 250)
+		self.label6 = QtGui.QLabel("leading edge starting point [mm] ", self)
+		self.label6.move(20, 250)
 		self.label7 = QtGui.QLabel('profile plane offset [mm] ', self)
 		self.label7.move(20, 290)
 
 		# radio buttons
 		self.radioButton1 = QtGui.QRadioButton("linear spacing",self)
 		self.radioButton1.clicked.connect(self.onRadioButton1)
-#		self.radioButton1.toggle()
 		self.radioButton1.move(370,70)
-		#
+
 		self.radioButton2 = QtGui.QRadioButton("cosine spacing",self)
 		self.radioButton2.clicked.connect(self.onRadioButton2)
 		self.radioButton2.toggle()
@@ -81,11 +81,11 @@ class PopUpNACA4(QtGui.QDialog):
 		self.numericInput5.setFixedWidth(100)
 		self.numericInput5.move(210, 210)
 
-#		self.numericInput6 = QtGui.QLineEdit(self)
-#		self.numericInput6.setInputMask("#xxxxxxxxx")
-#		self.numericInput6.setText("0")
-#		self.numericInput6.setFixedWidth(100)
-#		self.numericInput6.move(210, 250)
+		self.numericInput6 = QtGui.QLineEdit(self)
+		self.numericInput6.setInputMask("#xxxxxxxxx")
+		self.numericInput6.setText("0")
+		self.numericInput6.setFixedWidth(100)
+		self.numericInput6.move(210, 250)
 
 		self.numericInput7 = QtGui.QLineEdit(self)
 		self.numericInput7.setInputMask("#xxxxxxxxx")
@@ -135,10 +135,4 @@ class PopUpNACA4(QtGui.QDialog):
 		self.result			= "Plotted"
 		self.close()
 
-class PopUpNACA4_edit(PopUpNACA4):
-
-	def onApply(self):
-		self.result			= "OK"
-		self.close()
-	
 

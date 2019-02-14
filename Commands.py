@@ -16,7 +16,7 @@ class airFoil2D():	#part Design method
 			'MenuText': "airFoil2D",
 			'ToolTip' : "Create new sections for airFoil on sketches; actually only NACA4 digit is supported"}
 
-	def Activated(self, element = 0, name ='foilSketch'):
+	def Activated(self, element = 0, name = 'foilSketch'):
 		self.element = element
 		self.name = name
 		N = len(self.name)
@@ -37,6 +37,7 @@ class airFoil2D():	#part Design method
 
 Gui.addCommand('airFoil2D', airFoil2D())
 
+
 class wingExtruderPipe():	
 	
 	def GetResources(self):
@@ -46,7 +47,7 @@ class wingExtruderPipe():
 			'MenuText': "wingExtruderPipe",
 			'ToolTip' : "Generates solid feature and body using additive pipe PartDesign Feature"}
 
-	def Activated(self, sel = [], element = 0, name ='foilWing'):
+	def Activated(self, sel = [], element = 0, name = 'foilWing'):
 
 		self.sel = FreeCADGui.Selection.getSelection()
 		self.name = name
@@ -84,8 +85,10 @@ class wingExtruderPipe():
 		
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
-			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
-		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(wire.Label),None,'',[])
+			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[]) #ass3Environment
+			#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))
+		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(wire.Label),None,'',[]) #ass3Environment
+		#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(wire.Label))
 
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
 		FreeCAD.ActiveDocument.getObject(solid).Profile 		= FreeCAD.ActiveDocument.getObject(selected[0].Label)
@@ -95,6 +98,7 @@ class wingExtruderPipe():
 		FreeCAD.ActiveDocument.getObject(solid).Sections		= selected[1:]
 		FreeCAD.ActiveDocument.getObject(solid).Refine 			= True
 		FreeCAD.ActiveDocument.getObject(solid).Label2 			= "additivePipe"
+		#FreeCAD.ActiveDocument.getObject(solid).Label 			= "additivePipe"
 		FreeCAD.ActiveDocument.recompute()
 		return
 
@@ -128,7 +132,8 @@ class wingExtruderLoft(wingExtruderPipe):
 	def extrudeWing(self, selected, wing, solid):
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
-			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])	
+			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
+			#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))	
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditiveLoft',solid)
 		FreeCAD.ActiveDocument.getObject(solid).Profile 	= FreeCAD.ActiveDocument.getObject(selected[0].Label)
 		FreeCAD.ActiveDocument.getObject(solid).Sections	= selected[1:]
@@ -136,6 +141,7 @@ class wingExtruderLoft(wingExtruderPipe):
 		FreeCAD.ActiveDocument.getObject(solid).Closed 		= True
 		FreeCAD.ActiveDocument.getObject(solid).Refine 		= True
 		FreeCAD.ActiveDocument.getObject(solid).Label2 		= "loft"
+		#FreeCAD.ActiveDocument.getObject(solid).Label 		= "loft"
 		FreeCAD.ActiveDocument.recompute()
 		return
 
@@ -157,30 +163,30 @@ def airFoilSketcher(element,name):
 	TH 				=	int(form1.numericInput3.text())
 	chord			=	float(form1.numericInput4.text())
 	resolution 		= 	int(form1.numericInput5.text())
+	xOffSet			=	float(form1.numericInput6.text())
 	zOffSet			=	float(form1.numericInput7.text())
 
 	if form1.interpolation == userLinear:
 		interpolation = 0
 	else:
 		interpolation = 1
-
 	
 	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
 
 	if form1.result == userPlot:
-		NACA4_Generator.airFoilPlot(foil)
+		auxFunctions.airFoilPlot(foil)
 		return airFoilSketcher(element, name)
 
 	if form1.result==userCancelled:
 		pass
 
 	if form1.result==userApplied:
-		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
+		next = auxFunctions.sketchOnPlane(foil, element, name,xOffSet, zOffSet)
 		wing = airFoil2D()
 		return wing.Activated(next)
 
 	if form1.result==userOK:
-		next = NACA4_Generator.sketchOnPlane(foil, element, name, zOffSet)
+		next = auxFunctions.sketchOnPlane(foil, element, name,xOffSet, zOffSet)
 		pass
 
 #-----------------------------------------------------------------

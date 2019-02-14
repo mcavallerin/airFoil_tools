@@ -18,8 +18,10 @@ class insertFoil():
 		try:		
 			sel = FreeCADGui.Selection.getSelection() #creo una lista di oggetti gia selezionati
 			if sel[0].Label2 == 'additivePipe':
+			#if sel[0].Label == 'additivePipe':
 				List = sel[1:-1]
 			if sel[0].Label2 == 'loft':
+			#if sel[0].Label == 'loft':
 				List = sel[1:]
 			exList = sel[0].Sections
 			List.extend(exList)
@@ -28,6 +30,7 @@ class insertFoil():
 			a = sel[0].Sections
 			a.insert(0,sel[0].Profile[0]) #list of sketches needed to define the points for wire
 			if sel[0].Label2 == 'additivePipe':
+			#if sel[0].Label == 'additivePipe':
 				sel[0].Spine = (Commands.wingExtruderPipe().pathForPipe(a),[])
 		except:
 			errorMessage.errors('wrongSelection2')
@@ -67,6 +70,7 @@ class replaceFoil():
 					sel[0].Profile = i
 
 			if sel[0].Label2 == 'additivePipe':
+			#if sel[0].Label == 'additivePipe':
 				a = sel[0].Sections
 				a.insert(0,sel[0].Profile[0]) #list of sketches needed to define the points for wire
 				sel[0].Spine = (Commands.wingExtruderPipe().pathForPipe(a),[])
