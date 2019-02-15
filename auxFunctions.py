@@ -17,11 +17,11 @@ def sketchOnPlane(_foil,element,name,_xOffSet,_zOffSet):
 	_name = name + str(element)
 	_NACA4 = NACA4_Generator.NACA4_Generator.builderNACA4(_foil)
 	_beta = NACA4_Generator.NACA4_Generator.alignOXY(_foil)
-	print (_beta)
 	upperList=[]
 	lowerList=[]
 
-	FreeCAD.activeDocument().addObject('Sketcher::SketchObject',_name)
+	FreeCAD.activeDocument().addObject('Sketcher::SketchObjectPython',_name)
+	FreeCAD.activeDocument().getObject(_name).addProperty("App::PropertyString","Label2")
 	FreeCAD.activeDocument().getObject(_name).Placement = FreeCAD.Placement(FreeCAD.Vector(_xOffSet,0.000000,_zOffSet),FreeCAD.Rotation(FreeCAD.Vector(0.000000,0.000000,1.000000),_beta))
 	FreeCAD.activeDocument().getObject(_name).MapMode = "Deactivated"
 
@@ -34,7 +34,8 @@ def sketchOnPlane(_foil,element,name,_xOffSet,_zOffSet):
 	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(upperList,None,None,False,3,None,False),False)
 	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
 	FreeCAD.activeDocument().getObject(_name).Label2 = _NACA4[5]
-#	FreeCAD.activeDocument().getObject(_name).Label = _name
+	FreeCAD.activeDocument().getObject(_name).Label = _name
+	FreeCAD.activeDocument().getObject(_name).Visibility = True
 
 	element +=1
 
