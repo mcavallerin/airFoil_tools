@@ -35,7 +35,6 @@ def sketchOnPlane(_foil,element,name,_xOffSet,_zOffSet):
 	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
 	FreeCAD.activeDocument().getObject(_name).Label2 = _NACA4[5]
 	FreeCAD.activeDocument().getObject(_name).Label = _name
-	FreeCAD.activeDocument().getObject(_name).Visibility = True
 
 	element +=1
 
