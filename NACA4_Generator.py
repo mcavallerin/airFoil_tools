@@ -121,9 +121,7 @@ class NACA4_Generator:
 		Yt   = self._Yt(self.TH,Xp[-1])
 		teta = math.atan(self._dYc(Xp[-1]))
 		Xu   = (Xp[-1]-Yt*math.sin(teta))*self.chord
-		print (Xu)
 		Yc	= (self._Yc(Xp[-1]))*self.chord
-		print (Yc)
 		beta = math.degrees(math.atan(Yc/Xu)) #alignment angle			
 		return -beta
 

@@ -87,10 +87,10 @@ class wingExtruderPipe():
 		
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
-			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[]) #ass3Environment
-			#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))
-		FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(wire.Label),None,'',[]) #ass3Environment
-		#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(wire.Label))
+			#FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[]) #ass3Environment
+			FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))
+		#FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(wire.Label),None,'',[]) #ass3Environment
+		FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(wire.Label))
 
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditivePipe',solid)
 		FreeCAD.ActiveDocument.getObject(solid).Profile 		= FreeCAD.ActiveDocument.getObject(selected[0].Label)
@@ -99,7 +99,7 @@ class wingExtruderPipe():
 		FreeCAD.ActiveDocument.getObject(solid).Mode 			= u"Fixed"
 		FreeCAD.ActiveDocument.getObject(solid).Sections		= selected[1:]
 		FreeCAD.ActiveDocument.getObject(solid).Refine 			= True
-		FreeCAD.ActiveDocument.getObject(solid).Label2 			= "additivePipe"
+		#FreeCAD.ActiveDocument.getObject(solid).Label2 			= "additivePipe"
 		#FreeCAD.ActiveDocument.getObject(solid).Label 			= "additivePipe"
 		FreeCAD.ActiveDocument.recompute()
 		return
@@ -134,15 +134,15 @@ class wingExtruderLoft(wingExtruderPipe):
 	def extrudeWing(self, selected, wing, solid):
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
-			FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
-			#FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))	
+			#FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[])
+			FreeCAD.ActiveDocument.getObject(wing).addObject(FreeCAD.ActiveDocument.getObject(i.Label))	
 		FreeCAD.ActiveDocument.getObject(wing).newObject('PartDesign::AdditiveLoft',solid)
 		FreeCAD.ActiveDocument.getObject(solid).Profile 	= FreeCAD.ActiveDocument.getObject(selected[0].Label)
 		FreeCAD.ActiveDocument.getObject(solid).Sections	= selected[1:]
 		FreeCAD.ActiveDocument.getObject(solid).Ruled 		= True
 		FreeCAD.ActiveDocument.getObject(solid).Closed 		= True
 		FreeCAD.ActiveDocument.getObject(solid).Refine 		= True
-		FreeCAD.ActiveDocument.getObject(solid).Label2 		= "loft"
+		#FreeCAD.ActiveDocument.getObject(solid).Label2 		= "loft"
 		#FreeCAD.ActiveDocument.getObject(solid).Label 		= "loft"
 		FreeCAD.ActiveDocument.recompute()
 		return
@@ -198,10 +198,4 @@ userCosine		= 1
 userPlot        = "Plotted"
 userCancelled	= "Cancelled"
 userApplied     = "Applied"
-userOK			= "OK"
-
-
-
-
-
-
+userOK = "OK"
