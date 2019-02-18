@@ -18,12 +18,10 @@ class insertFoil():
 
 	def Activated(self):
 		try:		
-			sel = FreeCADGui.Selection.getSelection() #creo una lista di oggetti gia selezionati
+			sel = FreeCADGui.Selection.getSelection() 
 			if sel[0].Label2 == 'additivePipe':
-			#if sel[0].Label == 'additivePipe':
 				List = sel[1:-1]
 			if sel[0].Label2 == 'loft':
-			#if sel[0].Label == 'loft':
 				List = sel[1:]
 			exList = sel[0].Sections
 			List.extend(exList)
@@ -32,7 +30,6 @@ class insertFoil():
 			a = sel[0].Sections
 			a.insert(0,sel[0].Profile[0]) #list of sketches needed to define the points for wire
 			if sel[0].Label2 == 'additivePipe':
-			#if sel[0].Label == 'additivePipe':
 				sel[0].Spine = (Commands.wingExtruderPipe().pathForPipe(a),[])
 		except:
 			errorMessage.errors('wrongSelection2')
@@ -55,7 +52,7 @@ class replaceFoil():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/_airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "insertFoil",
-			'ToolTip' : "Allows you to replace one-by-one foil section on existing solid wing by selecting external sketch, but not the Profile\n1.Feature(wing)\n2.SketchToBeReplaced\n3.New Sketch"}
+			'ToolTip' : "Allows you to replace one-by-one foil section on existing solid wing by selecting external sketch, but not the starting Profile\n1.Feature(wing)\n2.SketchToBeReplaced\n3.New Sketch"}
 
 	def Activated(self):
 		try:
@@ -68,8 +65,8 @@ class replaceFoil():
 					List.pop(index)
 					List.insert(index,sel[2])
 					sel[0].Sections = List
-				else:
-					sel[0].Profile = i
+				#else:
+				#	sel[0].Profile = i
 
 			if sel[0].Label2 == 'additivePipe':
 			#if sel[0].Label == 'additivePipe':
@@ -116,6 +113,3 @@ class replaceProfile():
 			return True
 
 Gui.addCommand('replaceProfile', replaceProfile())
-
-
-
