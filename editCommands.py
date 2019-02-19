@@ -19,21 +19,24 @@ class insertFoil():
 	def Activated(self):
 		try:		
 			sel = FreeCADGui.Selection.getSelection() #creo una lista di oggetti gia selezionati
-			if sel[0].Label2 == 'additivePipe':
-			#if sel[0].Label == 'additivePipe':
-				List = sel[1:-1]
-			if sel[0].Label2 == 'loft':
-			#if sel[0].Label == 'loft':
-				List = sel[1:]
-			exList = sel[0].Sections
-			List.extend(exList)
-			auxFunctions.bubbleSort(List)
-			sel[0].Sections = List #Multisection list updated
-			a = sel[0].Sections
-			a.insert(0,sel[0].Profile[0]) #list of sketches needed to define the points for wire
-			if sel[0].Label2 == 'additivePipe':
-			#if sel[0].Label == 'additivePipe':
-				sel[0].Spine = (Commands.wingExtruderPipe().pathForPipe(a),[])
+			try:
+				len(sel)>3 or len(sel)<2
+				for i in sel:			
+					if i.Module == 'Sketcher':
+						section = sel.index(i) #indexing of new foil position
+					if i.Module == 'PartDesign':
+						feature = sel.index(i) #indexing of feature position
+
+				List = sel[feature].Sections
+				List.append(sel[section])
+				auxFunctions.bubbleSort(List)
+				sel[feature].Sections = List # List of Sections, Multisection list updated
+				a = sel[feature].Sections
+				a.insert(0,sel[feature].Profile[0]) #list of sketches needed to define the points for wire
+				if hasattr(sel[feature], 'Spine'):
+					sel[feature].Spine = (Commands.wingExtruderPipe().pathForPipe(a),[])
+			except:
+				errorMessage.errors('wrongSelection2')
 		except:
 			errorMessage.errors('wrongSelection2')
 
