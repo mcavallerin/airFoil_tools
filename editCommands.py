@@ -14,7 +14,7 @@ class insertFoil():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/_airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "insertFoil",
-			'ToolTip' : "Allows you to add foil section on existing solid wing \n it sorts the foils according to Z axis\n1. Select the 3D feature \n2. Select foils to be added \n3.If additive Pipe select also the wire"}
+			'ToolTip' : "insertFoil: Allows you to add foil section on existing solid wing \n it sorts the foils according to Z axis\n1. Select the 3D feature \n2. Select foils to be added \n3.If additive Pipe select also the wire"}
 
 	def Activated(self):
 		try:		
@@ -52,7 +52,7 @@ class replaceFoil():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/_airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "insertFoil",
-			'ToolTip' : "Allows you to replace one-by-one foil section on existing solid wing by selecting external sketch, but not the starting Profile\n1.Feature(wing)\n2.SketchToBeReplaced\n3.New Sketch"}
+			'ToolTip' : "replaceFoil: Allows you to replace one-by-one foil section on existing solid wing by selecting external sketch, but not the starting Profile\n1.Feature(wing)\n2.SketchToBeReplaced\n3.New Sketch"}
 
 	def Activated(self):
 		try:
@@ -94,7 +94,7 @@ class replaceProfile():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/_airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "insertFoil",
-			'ToolTip' : "Allows you to replace the Profile Sketch of the feature, both Loft and additive Pipe\n1. Select Feature(wing)\n2. select New Sketch"}
+			'ToolTip' : "replaceProfile: Allows you to replace the Profile Sketch of the feature, both Loft and additive Pipe\n1. Select Feature(wing)\n2. select New Sketch"}
 
 	def Activated(self):
 		try:

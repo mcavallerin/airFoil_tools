@@ -16,7 +16,7 @@ class airFoil2D():	#part Design method
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "airFoil2D",
-			'ToolTip' : "Create new sections for airFoil on sketches; actually only NACA4 digit is supported"}
+			'ToolTip' : "airFoil2D: Create new sections for airFoil on sketches; actually only NACA4 digit is supported"}
 
 	def Activated(self, element = 0, name = 'foilSketch'):
 		self.element = element
@@ -47,7 +47,7 @@ class wingExtruderPipe():
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "wingExtruderPipe",
-			'ToolTip' : "Generates solid feature and body using additive pipe PartDesign Feature"}
+			'ToolTip' : "wingExtruderPipe: Generates solid feature and body using additive pipe PartDesign Feature"}
 
 	def Activated(self, sel = [], element = 0, name = 'foilWing'):
 
@@ -128,7 +128,7 @@ class wingExtruderLoft(wingExtruderPipe):
 		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "wingExtruderLoft",
-			'ToolTip' : "Generates solid feature and body using loft PartDesign Feature"}
+			'ToolTip' : "wingExtruderLoft: Generates solid feature and body using loft PartDesign Feature"}
 
 
 	def extrudeWing(self, selected, wing, solid):
