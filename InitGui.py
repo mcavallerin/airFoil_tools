@@ -22,9 +22,11 @@ class airFoil_toolsWorkbench ( Workbench ):
 
 		generationCommands = [
 			'airFoil2D',
-			'airFoilRails2D',
 			'wingExtruderPipe',
-			'wingExtruderLoft'
+			'wingExtruderLoft',
+
+			'airFoilRails2D',
+			's2rCommandFoil'
 			]
 		editCommands = [
 			'insertFoil',
