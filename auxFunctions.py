@@ -101,8 +101,6 @@ def sketchOnRails(_foil,element,name,_xOffSet,_zOffSet): #Curves_integration
 #-------------------------------------
 
 def counter(nameSize,Number,objs = []):
-
-
 	size = len(objs) #number of elements on tree of features
 	for j in range(size):
 		for i in objs:
@@ -121,6 +119,22 @@ def bubbleSort(alist):
 				alist[i] = alist[i+1]
 				alist[i+1] = temp
 
+def splitListSketches(alist, key):
+	newList = []
+	for i in alist:
+		if hasattr (alist[i], "Label3"):
+			if alist[i].Label3 == 'Low':
+				newList.append(alist[i])
+		else:
+			return
+	return newList
+
+def pathForPipe(List):
+	points=[]
+	for i in List:
+		points.append(i.Placement.Base) #polyline on all origins for airfoils
+	wire = Draft.makeWire(points)
+	return wire
 
 #-------------------------
 #Plot Functions

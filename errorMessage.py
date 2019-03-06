@@ -25,6 +25,13 @@ def errors(a):
 			"You haven't selected the right features"
 			)
 
+	if a == "wrongSelection3":
+		QtGui.QMessageBox.information(
+			QtGui.QApplication.activeWindow(),
+			"List is empty",
+			"Please Select at Least two sketches"
+			)
+
 	if a == "buildError1":
 		QtGui.QMessageBox.information(
 			QtGui.QApplication.activeWindow(),

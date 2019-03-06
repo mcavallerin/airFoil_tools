@@ -17,7 +17,7 @@ class airFoilRails2D():	#part Design method
 	
 	def GetResources(self):
 		os.environ["USER"]
-		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilShaper.png"), # the name of a svg file available in the resources
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilRails2D.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "airFoilRails2D",
 			'ToolTip' : "Create new sections for airFoil on sketches; actually only NACA4 digit is supported"}
@@ -47,19 +47,40 @@ class s2rCommandFoil(Sweep2Rails.s2rCommand):
 
 	def GetResources(self):
 		os.environ["USER"]
-		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/airFoilSketcher.png"), # the name of a svg file available in the resources
+		return {'Pixmap'  : os.path.expandvars("/home/$USER") + ("/.FreeCAD/Mod/airFoil_tools/Resources/icons/s2rCommandFoil.png"), # the name of a svg file available in the resources
 			'Accel' : "Shift+S",
 			'MenuText': "airFoil2Rails",
 			'ToolTip' : "airFoil2Rails: USe of Curves WB skeon2Rails functions for airFoil generation"}
 
-	def inputList(self, List):
-		if List == []:
-			FreeCAD.Console.PrintError("List is empty\n")
-			return
-		self.Execute(List)
+	def inputList(self, sel = []):
+		self.sel = FreeCADGui.Selection.getSelection()
+		try:
+			if self.sel != []:
+				for i in self.sel:
+					if i.Module != 'Sketcher':
+						errorMessage.errors('wrongSelection2')
+						return
+				highList = auxFunctions(self.sel,"High")
+				auxFunctions.bubbleSort(highList)	
+				lowList = auxFunctions(self.sel,"Low")
+				auxFunctions.bubbleSort(lowList)
+#highList
+				if len(highList)>1:
+					for i in highList[1:]:
+						for j in highList:
+							Part.
+	
+#creare superfici per ogni profilo
 
-	def Execute(self,s):			
-		myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython","Sweep 2 rails")
+				self.Execute(self.highList,"upper")
+				self.Execute(self.lowList,"lower")
+				return
+		except:
+			errorMessage.errors('wrongSelection3')
+			return
+
+	def Execute(self,s,key):
+		myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython",key) #Foils2Rails
 		Sweep2Rails.sweep2rails(myS2R)
 		Sweep2Rails.sweep2railsVP(myS2R.ViewObject)
 

@@ -75,16 +75,18 @@ class wingExtruderPipe():
 		FreeCAD.Console.PrintMessage("new wing just ready to fly!" + "\n")
 		return
 
-	def pathForPipe(self, List):
-		points=[]
-		for i in List:
-			points.append(i.Placement.Base) #polyline on all origins for airfoils
-		wire = Draft.makeWire(points)
-		return wire
+#	def pathForPipe(self, List):
+#		points=[]
+#		for i in List:
+#			points.append(i.Placement.Base) #polyline on all origins for airfoils
+#		wire = Draft.makeWire(points)
+#		return wire
 	
 	def extrudeWing(self, selected, wing, solid):
-		wire = self.pathForPipe(self.sel)
-		
+#		wire = self.pathForPipe(self.sel)
+		wire = auxFunctions.pathForPipe(self.sel)
+				
+
 		FreeCAD.ActiveDocument.addObject("PartDesign::Body", wing)
 		for i in selected:
 			#FreeCAD.ActiveDocument.getObject(wing).ViewObject.dropObject(FreeCAD.ActiveDocument.getObject(i.Label),None,'',[]) #ass3Environment
