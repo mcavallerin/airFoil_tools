@@ -42,8 +42,59 @@ def sketchOnPlane(_foil,element,name,_xOffSet,_zOffSet):
 
 	return element
 
-def sketchOnSketch(_foil,element,name,_xOffSet,_zOffSet):
-	pass
+def sketchOnRails(_foil,element,name,_xOffSet,_zOffSet): #Curves_integration
+	_name = name + str(element)
+	_NACA4 = NACA4_Generator.NACA4_Generator.builderNACA4(_foil)
+	_beta = NACA4_Generator.NACA4_Generator.alignOXY(_foil)
+	upperList=[]
+
+
+	FreeCAD.activeDocument().addObject('Sketcher::SketchObjectPython',_name)
+	FreeCAD.activeDocument().getObject(_name).addProperty("App::PropertyString","Label2")
+	FreeCAD.activeDocument().getObject(_name).addProperty("App::PropertyString","Label3")
+	FreeCAD.activeDocument().getObject(_name).Placement = FreeCAD.Placement(FreeCAD.Vector(_xOffSet,0.000000,_zOffSet),FreeCAD.Rotation(FreeCAD.Vector(0.000000,0.000000,1.000000),_beta))
+	FreeCAD.activeDocument().getObject(_name).MapMode = "Deactivated"
+
+	for i in range (_NACA4[4]):
+			point = FreeCAD.Vector(_NACA4[0][i], _NACA4[1][i], 0)
+			upperList.append(point)
+	
+	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(upperList,None,None,False,3,None,False),False)
+	FreeCAD.activeDocument().getObject(_name).Label2 = _NACA4[5]
+	FreeCAD.activeDocument().getObject(_name).Label3 = "High"
+	FreeCAD.activeDocument().getObject(_name).ViewObject.Proxy=1
+	FreeCAD.activeDocument().getObject(_name).Label = _name
+	FreeCAD.activeDocument().recompute()
+
+	element +=1
+
+	_name = name + str(element)
+	_NACA4 = NACA4_Generator.NACA4_Generator.builderNACA4(_foil)
+	_beta = NACA4_Generator.NACA4_Generator.alignOXY(_foil)
+	lowerList=[]
+
+
+	FreeCAD.activeDocument().addObject('Sketcher::SketchObjectPython',_name)
+	FreeCAD.activeDocument().getObject(_name).addProperty("App::PropertyString","Label2")
+	FreeCAD.activeDocument().getObject(_name).addProperty("App::PropertyString","Label3")
+	FreeCAD.activeDocument().getObject(_name).Placement = FreeCAD.Placement(FreeCAD.Vector(_xOffSet,0.000000,_zOffSet),FreeCAD.Rotation(FreeCAD.Vector(0.000000,0.000000,1.000000),_beta))
+	FreeCAD.activeDocument().getObject(_name).MapMode = "Deactivated"
+
+	for i in range (_NACA4[4]):
+			point = FreeCAD.Vector(_NACA4[2][i], _NACA4[3][i], 0)
+			lowerList.append(point)
+	
+	FreeCAD.activeDocument().getObject(_name).addGeometry(Part.BSplineCurve(lowerList,None,None,False,3,None,False),False)
+	FreeCAD.activeDocument().getObject(_name).Label2 = _NACA4[5]
+	FreeCAD.activeDocument().getObject(_name).Label3 = "Low"
+	FreeCAD.activeDocument().getObject(_name).ViewObject.Proxy=1
+	FreeCAD.activeDocument().getObject(_name).Label = _name
+	FreeCAD.activeDocument().recompute()
+
+	element +=1
+
+	return element
+
 
 #-------------------------------------
 #Utilities

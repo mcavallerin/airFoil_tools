@@ -18,10 +18,11 @@ class airFoil_toolsWorkbench ( Workbench ):
 
 	def Initialize(self):
 		"This function is executed when FreeCAD starts"
-		import Commands, editCommands # import here all the needed files that create your FreeCAD commands
+		import Commands, editCommands, CurvesWB_Commands # import here all the needed files that create your FreeCAD commands
 
 		generationCommands = [
 			'airFoil2D',
+			'airFoilRails2D',
 			'wingExtruderPipe',
 			'wingExtruderLoft'
 			]
