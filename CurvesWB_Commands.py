@@ -65,13 +65,15 @@ class s2rCommandFoil(Sweep2Rails.s2rCommand):
 				lowList = auxFunctions(self.sel,"Low")
 				auxFunctions.bubbleSort(lowList)
 #highList
-				if len(highList)>1:
-					for i in highList[1:]:
-						for j in highList:
-							Part.
-	
-#creare superfici per ogni profilo
+				auxFunctions(highList)
+#lowList
+				auxFunctions(lowList)
 
+				FreeCAD.ActiveDocument.addObject('Part::RuledSurface', 'Ruled Surface')
+				FreeCAD.ActiveDocument.ActiveObject.Curve1=(FreeCAD.ActiveDocument.lineH,[''])
+				FreeCAD.ActiveDocument.ActiveObject.Curve2=(FreeCAD.ActiveDocument.lineL,[''])
+				App.ActiveDocument.recompute()
+					
 				self.Execute(self.highList,"upper")
 				self.Execute(self.lowList,"lower")
 				return

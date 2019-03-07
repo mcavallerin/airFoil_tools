@@ -136,6 +136,21 @@ def pathForPipe(List):
 	wire = Draft.makeWire(points)
 	return wire
 
+def pathForRails(List): #needs a getSelectionEx() List
+	#define two dummy FreeCAD.Vector
+
+	V1 = FreeCAD.Vector()
+	V2 = FreeCAD.Vector()
+	Coord = ['x','y','z'] #define iterator for coordinates coordinates
+	for i in range(len(List)-1):
+		for j in Coord:
+			V1.Coord[j] = List.sel[i+1].Shape.Edges[0].Vertexes[i+1].Coord[j]
+			V2.Coord[j] = List.sel[i].Shape.Edges[0].Vertexes[i].Coord[j]
+	points = [V1,V2]
+	pl = FreeCAD.Placement()
+	line = Draft.makeWire(points,placement=pl,closed=False,face=True,support=None)
+	return line
+
 #-------------------------
 #Plot Functions
 #-------------------------
