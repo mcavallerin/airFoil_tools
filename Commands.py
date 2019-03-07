@@ -168,10 +168,10 @@ def airFoilSketcher(element,name):
 	xOffSet			=	float(form1.numericInput6.text())
 	zOffSet			=	float(form1.numericInput7.text())
 
-	if form1.interpolation == userLinear:
-		interpolation = 0
-	else:
-		interpolation = 1
+#	if form1.interpolation == userLinear:
+#		interpolation = 0
+#	else:
+	interpolation = 1
 	
 	foil = NACA4_Generator.NACA4_Generator(m,p,TH,chord,resolution,interpolation)
 
