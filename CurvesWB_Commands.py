@@ -55,44 +55,67 @@ class s2rCommandFoil(Sweep2Rails.s2rCommand):
 	def inputList(self, sel = []):
 		self.sel = FreeCADGui.Selection.getSelection()
 		try:
-			if self.sel != []:
+			if self.sel==2:		#self.sel != []: TODO remove limitations for two sketch at times
 				for i in self.sel:
 					if i.Module != 'Sketcher':
 						errorMessage.errors('wrongSelection2')
 						return
-				highList = auxFunctions(self.sel,"High")
-				auxFunctions.bubbleSort(highList)	
-				lowList = auxFunctions(self.sel,"Low")
-				auxFunctions.bubbleSort(lowList)
+				if self.sel[0].Label3 != self.sel[0].Label3:
+						errorMessage.errors('wrongSelection4')
+						return				
+#				highList = auxFunctions.splitListSketches(self.sel,"High")
+#				auxFunctions.bubbleSort(highList)	
+#				lowList = auxFunctions.splitListSketches(self.sel,"Low")
+#				auxFunctions.bubbleSort(lowList)
 #highList
-				auxFunctions(highList)
+#				auxFunctions.pathForRails(highList)
 #lowList
-				auxFunctions(lowList)
+#				auxFunctions.pathForRails(lowList)
+				listOfP = [] 
+				listOfP = auxFunctions.pathForRails(self.sel) #TODO actually only for two sketches
+				listofL = []
+				for i in listOfP:
+					pl = FreeCAD.Placement()
+					line = Draft.makeWire(i,placement=pl,closed=False,face=True,support=None)
+					listofL.append(line)
+					FreeCAD.ActiveDocument.recompute()
 
-				FreeCAD.ActiveDocument.addObject('Part::RuledSurface', 'Ruled Surface')
-				FreeCAD.ActiveDocument.ActiveObject.Curve1=(FreeCAD.ActiveDocument.lineH,[''])
-				FreeCAD.ActiveDocument.ActiveObject.Curve2=(FreeCAD.ActiveDocument.lineL,[''])
-				App.ActiveDocument.recompute()
-					
-				self.Execute(self.highList,"upper")
-				self.Execute(self.lowList,"lower")
-				return
+				plane = FreeCAD.ActiveDocument.addObject('Part::RuledSurface', 'Ruled Surface')
+				plane.Curve1=(listOfL[0],['']) #FreeCAD.ActiveDocument.ActiveObject.Curve1=(listOfL[0],[''])
+				plane.Curve1=(listOfL[1],['']) #FreeCAD.ActiveDocument.ActiveObject.Curve2=(listOfL[1],[''])
+				FreeCAD.ActiveDocument.recompute()
+				self.sel.append(plane) 
+#				self.Execute(self.highList,"upper") #TODO actually only one surface at a time
+#				self.Execute(self.lowList,"lower")
+				key = 'surface'
+				myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython",key) #Foils2Rails
+				Sweep2Rails.sweep2rails(myS2R)
+				Sweep2Rails.sweep2railsVP(myS2R.ViewObject)
+				myS2R.Birail   = self.parseSel(self.sel)[0]
+				myS2R.Profiles = self.parseSel(self.sel)[1]
+				myS2R.Birail.ViewObject.Visibility = False
+				for p in myS2R.Profiles:
+					p.ViewObject.Visibility = False
+
+				FreeCAD.ActiveDocument.recompute()
+				#return
 		except:
 			errorMessage.errors('wrongSelection3')
 			return
 
-	def Execute(self,s,key):
-		myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython",key) #Foils2Rails
-		Sweep2Rails.sweep2rails(myS2R)
-		Sweep2Rails.sweep2railsVP(myS2R.ViewObject)
+#	def Activated(self):
+#		print (kvarg)
+#		myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython",key) #Foils2Rails
+#		Sweep2Rails.sweep2rails(myS2R)
+#		Sweep2Rails.sweep2railsVP(myS2R.ViewObject)
 
-		myS2R.Birail   = self.parseSel(s)[0]
-		myS2R.Profiles = self.parseSel(s)[1]
-		myS2R.Birail.ViewObject.Visibility = False
-		for p in myS2R.Profiles:
-			p.ViewObject.Visibility = False
+#		myS2R.Birail   = self.parseSel(s)[0]
+#		myS2R.Profiles = self.parseSel(s)[1]
+#		myS2R.Birail.ViewObject.Visibility = False
+#		for p in myS2R.Profiles:
+#			p.ViewObject.Visibility = False
 
-		FreeCAD.ActiveDocument.recompute()
+#		FreeCAD.ActiveDocument.recompute()
 
 Gui.addCommand('s2rCommandFoil', s2rCommandFoil())
 

@@ -122,9 +122,9 @@ def bubbleSort(alist):
 def splitListSketches(alist, key):
 	newList = []
 	for i in alist:
-		if hasattr (alist[i], "Label3"):
-			if alist[i].Label3 == 'Low':
-				newList.append(alist[i])
+		if hasattr (i, "Label3"):
+			if i.Label3 == 'Low':
+				newList.append(i)
 		else:
 			return
 	return newList
@@ -138,18 +138,27 @@ def pathForPipe(List):
 
 def pathForRails(List): #needs a getSelectionEx() List
 	#define two dummy FreeCAD.Vector
-
+	listOfP = []
 	V1 = FreeCAD.Vector()
 	V2 = FreeCAD.Vector()
-	Coord = ['x','y','z'] #define iterator for coordinates coordinates
-	for i in range(len(List)-1):
-		for j in Coord:
-			V1.Coord[j] = List.sel[i+1].Shape.Edges[0].Vertexes[i+1].Coord[j]
-			V2.Coord[j] = List.sel[i].Shape.Edges[0].Vertexes[i].Coord[j]
-	points = [V1,V2]
-	pl = FreeCAD.Placement()
-	line = Draft.makeWire(points,placement=pl,closed=False,face=True,support=None)
-	return line
+	for j in range(len(List)-1):
+		for i in range(len(List)-1):
+			V1.x = List[i].Shape.Edges[0].Vertexes[j].Point.x
+			print(V1.x)
+			V2.x = List[i].Shape.Edges[0].Vertexes[j].Point.x
+			print(V2.x)			
+			V1.y = List[i].Shape.Edges[0].Vertexes[j].Point.y
+			print(V1.y)
+			V2.y = List[i].Shape.Edges[0].Vertexes[j].Point.y
+			print(V2.y)
+			V1.z = List[i].Shape.Edges[0].Vertexes[j].Point.z
+			print(V1.z)
+			V2.z = List[i].Shape.Edges[0].Vertexes[j].Point.z
+			print(V2.z)
+			points = [V1,V2]
+		listofP.append(points)
+
+	return listofP
 
 #-------------------------
 #Plot Functions
