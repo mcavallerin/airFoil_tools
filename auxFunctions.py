@@ -2,10 +2,13 @@
 
 import FreeCAD, FreeCADGui
 from FreeCAD import Gui
-import Part, math, Draft, os
+import Part, math, Draft, os, sys
 from FreeCAD import Base
 import NACA4_Generator
 import matplotlib.pyplot as plt
+
+sys.path.append(os.path.expandvars("/home/$USER/.FreeCAD/Mod/Curves"))
+import Sweep2Rails as S2R
 
 
 #--------------------------------------
@@ -123,7 +126,7 @@ def splitListSketches(alist, key):
 	newList = []
 	for i in alist:
 		if hasattr (i, "Label3"):
-			if i.Label3 == 'Low':
+			if i.Label3 == key:
 				newList.append(i)
 		else:
 			return
@@ -136,29 +139,46 @@ def pathForPipe(List):
 	wire = Draft.makeWire(points)
 	return wire
 
-def pathForRails(List): #needs a getSelectionEx() List
-	#define two dummy FreeCAD.Vector
-	listOfP = []
+def geoForRails(List): #needs a getSelectionEx() List
+	#define two dummy FreeCAD
+	listOfG = []
 	V1 = FreeCAD.Vector()
 	V2 = FreeCAD.Vector()
-	for j in range(len(List)-1):
+	for j in range(len(List)):
+		name = 'line'+str(j)
 		for i in range(len(List)-1):
 			V1.x = List[i].Shape.Edges[0].Vertexes[j].Point.x
-			print(V1.x)
-			V2.x = List[i].Shape.Edges[0].Vertexes[j].Point.x
-			print(V2.x)			
+			V2.x = List[i+1].Shape.Edges[0].Vertexes[j].Point.x
 			V1.y = List[i].Shape.Edges[0].Vertexes[j].Point.y
-			print(V1.y)
-			V2.y = List[i].Shape.Edges[0].Vertexes[j].Point.y
-			print(V2.y)
+			V2.y = List[i+1].Shape.Edges[0].Vertexes[j].Point.y
 			V1.z = List[i].Shape.Edges[0].Vertexes[j].Point.z
-			print(V1.z)
-			V2.z = List[i].Shape.Edges[0].Vertexes[j].Point.z
-			print(V2.z)
+			V2.z = List[i+1].Shape.Edges[0].Vertexes[j].Point.z
 			points = [V1,V2]
-		listofP.append(points)
+			pl = FreeCAD.Placement()
+			name = Draft.makeWire(points,placement=pl,closed=False,face=True,support=None)
+			FreeCAD.ActiveDocument.recompute()
+		listOfG.append(name)
+	plane = FreeCAD.ActiveDocument.addObject('Part::RuledSurface', 'Ruled Surface')
+	FreeCAD.ActiveDocument.ActiveObject.Curve1=(listOfG[0],[''])
+	FreeCAD.ActiveDocument.ActiveObject.Curve2=(listOfG[1],[''])
+	FreeCAD.ActiveDocument.recompute()
+	List.append(plane) 
+	return List
 
-	return listofP
+def foilToRails(List,key): 
+
+    myS2R = FreeCAD.ActiveDocument.addObject("App::FeaturePython",key)
+    S2R.sweep2rails(myS2R)
+    S2R.sweep2railsVP(myS2R.ViewObject)
+
+    parseList = S2R.s2rCommand()
+    myS2R.Birail = parseList.parseSel(List)[0]
+    myS2R.Profiles = parseList.parseSel(List)[1]
+
+    myS2R.Birail.ViewObject.Visibility = False
+    for p in myS2R.Profiles:
+        p.ViewObject.Visibility = False
+	FreeCAD.ActiveDocument.recompute()
 
 #-------------------------
 #Plot Functions
